@@ -6,12 +6,12 @@ using Sales.Shared.Entities;
 namespace Sales.API.Controllers
 {
     [ApiController]
-    [Route("/api/countries")]
-    public class CountriesController : ControllerBase
+    [Route("/api/categories")]
+    public class CategoriesController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public CountriesController(DataContext context)
+        public CategoriesController(DataContext context)
         {
             _context = context;
         }
@@ -19,26 +19,23 @@ namespace Sales.API.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            return Ok(await _context.Countries
-                .Include(x => x.States)
-                .ThenInclude(x => x.Cities)
-                .ToListAsync());
+            return Ok(await _context.Categories.ToListAsync());
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Country country)
+        public async Task<ActionResult> Post(Category category)
         {
-            _context.Add(country);
+            _context.Add(category);
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(country);
+                return Ok(category);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un país con el mismo nombre.");
+                    return BadRequest("Ya existe una categoría con el mismo nombre.");
                 }
                 else
                 {
@@ -56,27 +53,23 @@ namespace Sales.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var country = await _context.Countries
-                .Include(x => x.States)
-                .ThenInclude(x => x.Cities)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (country is null)
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            if (category is null)
             {
                 return NotFound();
             }
 
-            return Ok(country);
+            return Ok(category);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Country country)
+        public async Task<ActionResult> Put(Category category)
         {
-            _context.Update(country);
+            _context.Update(category);
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(country);
+                return Ok(category);
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -99,7 +92,7 @@ namespace Sales.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var afectedRows = await _context.Countries
+            var afectedRows = await _context.Categories
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
 

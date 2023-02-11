@@ -1,38 +1,33 @@
-﻿@page "/countries"
+﻿@page "/categories"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService swal
 
-<h3>Paises</h3>
+<h3>Categorías</h3>
 
 <div class="mb-3">
-    <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+    <a class="btn btn-primary" href="/categories/create">Nueva Categoría</a>
 </div>
 
-<GenericList MyList="Countries">
+<GenericList MyList="Categories">
     <RecordsComplete>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th></th>
-                    <th>País</th>
-                    <th>Departamentos / Estados</th>
+                    <th>Categoría</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var country in Countries!)
+                @foreach (var category in Categories!)
                 {
                     <tr>
                         <td>
-                            <a href="/countries/details/@country.Id" class="btn btn-info">Detalles</a>
-                            <a href="/countries/edit/@country.Id" class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger" @onclick=@(() => Delete(country))>Borrar</button>
+                            <a href="/categories/edit/@category.Id" class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger" @onclick=@(() => Delete(category))>Borrar</button>
                         </td>
                         <td>
-                            @country.Name
-                        </td>
-                        <td>
-                            @country.StatesNumber
+                            @category.Name
                         </td>
                     </tr>
                 }
@@ -42,7 +37,7 @@
 </GenericList>
 
 @code {
-    public List<Country>? Countries { get; set; }
+    public List<Category>? Categories { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -51,11 +46,11 @@
 
     private async Task Load()
     {
-        var responseHppt = await repository.Get<List<Country>>("api/countries");
-        Countries = responseHppt.Response!;
+        var responseHppt = await repository.Get<List<Category>>("api/categories");
+        Categories = responseHppt.Response!;
     }
 
-    private async Task Delete(Country country)
+    private async Task Delete(Category category)
     {
         var result = await swal.FireAsync(new SweetAlertOptions
             {
@@ -72,7 +67,7 @@
             return;
         }
 
-        var responseHTTP = await repository.Delete($"api/countries/{country.Id}");
+        var responseHTTP = await repository.Delete($"api/countries/{category.Id}");
 
         if (responseHTTP.Error)
         {
