@@ -9,14 +9,18 @@
     <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
 </div>
 
+<Pagination CurrentPage="currentPage"
+            TotalPages="totalPages"
+            SelectedPage="SelectedPage" />
+
 <GenericList MyList="Countries">
     <RecordsComplete>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th></th>
                     <th>País</th>
-                    <th>Departamentos / Estados</th>
+                    <th>Departamentos/Estados</th>
+                    <th style="width:280px"></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,15 +28,15 @@
                 {
                     <tr>
                         <td>
-                            <a href="/countries/details/@country.Id" class="btn btn-info">Detalles</a>
-                            <a href="/countries/edit/@country.Id" class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger" @onclick=@(() => Delete(country))>Borrar</button>
-                        </td>
-                        <td>
                             @country.Name
                         </td>
                         <td>
                             @country.StatesNumber
+                        </td>
+                        <td>
+                            <a href="/countries/details/@country.Id" class="btn btn-info">Detalles</a>
+                            <a href="/countries/edit/@country.Id" class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger" @onclick=@(() => Delete(country))>Borrar</button>
                         </td>
                     </tr>
                 }
@@ -43,6 +47,8 @@
 
 @code {
     public List<Country>? Countries { get; set; }
+    private int currentPage = 1;
+    private int totalPages;
 
     protected async override Task OnInitializedAsync()
     {
@@ -53,6 +59,20 @@
     {
         var responseHppt = await repository.Get<List<Country>>("api/countries");
         Countries = responseHppt.Response!;
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        currentPage = page;
+        await Load(page);
+    }
+
+    private async Task Load(int page = 1)
+    {
+        var responseHppt = await repository.Get<List<Country>>($"api/countries?page={page}");
+        var responseHppt2 = await repository.Get<int>($"api/countries/totalPages");
+        Countries = responseHppt.Response!;
+        totalPages = responseHppt2.Response!;
     }
 
     private async Task Delete(Country country)
@@ -91,5 +111,4 @@
             await Load();
         }
     }
-
 }

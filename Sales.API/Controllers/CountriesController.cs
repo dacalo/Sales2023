@@ -32,6 +32,16 @@ namespace Sales.API.Controllers
                 .ToListAsync());
         }
 
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Countries.AsQueryable();
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
+
         [HttpGet("full")]
         public async Task<ActionResult> GetFull([FromQuery] PaginationDTO pagination)
         {
