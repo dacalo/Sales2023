@@ -77,7 +77,7 @@
             }
             else
             {
-                var mensajeError = await responseHTTP.GetErrorMessage();
+                var mensajeError = await responseHTTP.GetErrorMessageAsync();
                 await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
             }
         }
