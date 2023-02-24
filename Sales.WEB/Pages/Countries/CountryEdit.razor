@@ -1,6 +1,6 @@
 ﻿@page "/countries/edit/{Id:int}"
-@inject NavigationManager navigationManager
 @inject IRepository repository
+@inject NavigationManager navigationManager
 @inject SweetAlertService swal
 
 <h3>Editar País</h3>
@@ -11,7 +11,7 @@
 }
 else
 {
-    <CountryForm @ref="countryForm" Country="country" OnValidSubmit="Edit" />
+    <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
 }
 
 
@@ -28,35 +28,35 @@ else
 
         if (responseHTTP.Error)
         {
-            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (responseHTTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
             {
                 navigationManager.NavigateTo("countries");
+                return;
             }
-            else
-            {
-                var messageError = await responseHTTP.GetErrorMessageAsync();
-                await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
-            }
+
+            var messageError = await responseHTTP.GetErrorMessageAsync();
+            await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            return;
         }
-        else
-        {
-            country = responseHTTP.Response;
-        }
+        country = responseHTTP.Response;
     }
 
-    private async Task Edit()
+    private async Task EditAsync()
     {
-        var responseHTTP = await repository.Put("api/countries", country);
+        var responseHttp = await repository.Put("/api/countries", country);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
 
-        if (responseHTTP.Error)
-        {
-            var mensajeError = await responseHTTP.GetErrorMessageAsync();
-            await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
-        }
-        else
-        {
-            countryForm!.FormPostedSuccessfully = true;
-            navigationManager.NavigateTo("countries");
-        }
+        Return();
+    }
+
+    private void Return()
+    {
+        countryForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/countries");
     }
 }

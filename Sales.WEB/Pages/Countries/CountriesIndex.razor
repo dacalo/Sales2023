@@ -36,7 +36,7 @@
                         <td>
                             <a href="/countries/details/@country.Id" class="btn btn-info">Detalles</a>
                             <a href="/countries/edit/@country.Id" class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger" @onclick=@(() => Delete(country))>Borrar</button>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(country.Id))>Borrar</button>
                         </td>
                     </tr>
                 }
@@ -64,10 +64,10 @@
     private async Task SelectedPage(int page)
     {
         currentPage = page;
-        await Load(page);
+        await LoadAsync(page);
     }
 
-    private async Task Load(int page = 1)
+    private async Task LoadAsync(int page = 1)
     {
         var responseHppt = await repository.Get<List<Country>>($"api/countries?page={page}");
         var responseHppt2 = await repository.Get<int>($"api/countries/totalPages");
@@ -75,40 +75,35 @@
         totalPages = responseHppt2.Response!;
     }
 
-    private async Task Delete(Country country)
+    private async Task DeleteAsync(int id)
     {
         var result = await swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
-                Text = "¿Esta seguro que quieres borrar el registro?",
+                Text = "¿Realmente deseas eliminar el registro?",
                 Icon = SweetAlertIcon.Question,
-                ShowCancelButton = true
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
             });
 
         var confirm = string.IsNullOrEmpty(result.Value);
-
         if (confirm)
         {
             return;
         }
 
-        var responseHTTP = await repository.Delete($"api/countries/{country.Id}");
+        var responseHttp = await repository.Delete($"/api/countries/{id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+        }
 
-        if (responseHTTP.Error)
-        {
-            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                navigationManager.NavigateTo("/");
-            }
-            else
-            {
-                var mensajeError = await responseHTTP.GetErrorMessageAsync();
-                await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
-            }
-        }
-        else
-        {
-            await Load();
-        }
+        await LoadAsync();
     }
 }

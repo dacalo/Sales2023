@@ -19,7 +19,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.Countries
                 .Include(x => x.States)
@@ -33,7 +33,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet("totalPages")]
-        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.Countries.AsQueryable();
             double count = await queryable.CountAsync();
@@ -43,7 +43,7 @@ namespace Sales.API.Controllers
 
 
         [HttpGet("full")]
-        public async Task<ActionResult> GetFull([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetFullAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.Countries
                 .Include(x => x.States!)
@@ -58,7 +58,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> GetAsync(int id)
         {
             var country = await _context.Countries
                 .Include(x => x.States)
@@ -74,7 +74,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Country country)
+        public async Task<ActionResult> PostAsync(Country country)
         {
             _context.Add(country);
             try
@@ -96,7 +96,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Country country)
+        public async Task<ActionResult> PutAsync(Country country)
         {
             _context.Update(country);
             try
