@@ -19,7 +19,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.States
                 .Include(x => x.Cities)
@@ -32,7 +32,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet("totalPages")]
-        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.States
                 .Where(x => x.Country!.Id == pagination.Id)
@@ -44,7 +44,7 @@ namespace Sales.API.Controllers
 
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> GetAsync(int id)
         {
             var state = await _context.States
                 .Include(x => x.Country)
@@ -59,7 +59,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(State state)
+        public async Task<ActionResult> PostAsync(State state)
         {
             _context.Add(state);
             try
@@ -85,7 +85,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(State state)
+        public async Task<ActionResult> PutAsync(State state)
         {
             _context.Update(state);
             try
@@ -111,7 +111,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
             var afectedRows = await _context.States
                 .Where(x => x.Id == id)
