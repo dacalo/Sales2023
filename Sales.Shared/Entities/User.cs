@@ -6,10 +6,10 @@ namespace Sales.Shared.Entities
 {
     public class User : IdentityUser
     {
-        [Display(Name = "Documento")]
-        [MaxLength(20, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
+        [Display(Name = "RFC")]
+        [MaxLength(13, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public string Document { get; set; } = null!;
+        public string RFC { get; set; } = null!;
 
         [Display(Name = "Nombres")]
         [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
@@ -32,10 +32,11 @@ namespace Sales.Shared.Entities
         [Display(Name = "Tipo de usuario")]
         public UserType UserType { get; set; }
 
-        public int CityId { get; set; }
+        public City? City { get; set; }
 
         [Display(Name = "Ciudad")]
-        public City? City { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
+        public int CityId { get; set; }
 
         [Display(Name = "Usuario")]
         public string FullName => $"{FirstName} {LastName}";

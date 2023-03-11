@@ -10,11 +10,12 @@
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+
     <NotFound>
         <CascadingAuthenticationState>
             <PageTitle>No encontrado</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Lo sentimos, recurso no encontrado.</p>
+                <p role="alert">Lo sentimos, no hay nada en ésta ruta.</p>
             </LayoutView>
         </CascadingAuthenticationState>
     </NotFound>

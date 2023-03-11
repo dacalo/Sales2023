@@ -13,7 +13,10 @@ namespace Sales.API.Data
         private readonly IApiService _apiService;
         private readonly IUserHelper _userHelper;
 
-        public SeedDb(DataContext context, IApiService apiService, IUserHelper userHelper)
+        public SeedDb(
+            DataContext context, 
+            IApiService apiService, 
+            IUserHelper userHelper)
         {
             _context = context;
             _apiService = apiService;
@@ -27,7 +30,7 @@ namespace Sales.API.Data
             await CheckCountriesAsync();
             await CheckCategoriesAsync();
             await CheckRolesAsync();
-            await CheckUserAsync("1010", "Juan", "Zuluaga", "zulu@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", UserType.Admin);
+            await CheckUserAsync("CALD7808244AA", "Juan", "Zuluaga", "zulu@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", UserType.Admin);
 
         }
 
@@ -44,7 +47,7 @@ namespace Sales.API.Data
                     UserName = email,
                     PhoneNumber = phone,
                     Address = address,
-                    Document = document,
+                    RFC = document,
                     City = _context.Cities.FirstOrDefault(),
                     UserType = userType,
                 };

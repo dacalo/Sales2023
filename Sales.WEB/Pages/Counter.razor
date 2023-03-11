@@ -10,6 +10,7 @@
 
 @code {
     private int currentCount = 0;
+
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
