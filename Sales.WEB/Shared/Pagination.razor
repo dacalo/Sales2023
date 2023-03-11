@@ -1,5 +1,5 @@
 ﻿<nav>
-    <ul class="pagination justify-content-center">
+    <ul class="pagination">
 
         @foreach (var link in Links)
         {
@@ -16,21 +16,6 @@
     [Parameter] public int Radio { get; set; } = 5;
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
     List<PageModel> Links = new();
-
-    private async Task InternalSelectedPage(PageModel pageModel)
-    {
-        if (pageModel.Page == CurrentPage)
-        {
-            return;
-        }
-
-        if (!pageModel.Enable)
-        {
-            return;
-        }
-
-        await SelectedPage.InvokeAsync(pageModel.Page);
-    }
 
     protected override void OnParametersSet()
     {
@@ -69,6 +54,16 @@
 
     }
 
+    private async Task InternalSelectedPage(PageModel pageModel)
+    {
+        if (pageModel.Page == CurrentPage || pageModel.Page == 0)
+        {
+            return;
+        }
+
+        await SelectedPage.InvokeAsync(pageModel.Page);
+    }
+
     class PageModel
     {
         public string Text { get; set; } = null!;
@@ -76,4 +71,5 @@
         public bool Enable { get; set; } = true;
         public bool Active { get; set; } = false;
     }
+
 }

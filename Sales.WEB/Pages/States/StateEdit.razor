@@ -11,7 +11,7 @@
 }
 else
 {
-    <StateForm @ref="stateForm" State="state" OnValidSubmit="Edit" ReturnAction="Return" />
+    <StateForm @ref="stateForm" State="state" OnValidSubmit="EditAsync" ReturnAction="Return" />
 }
 
 
@@ -31,7 +31,7 @@ else
 
         if (responseHTTP.Error)
         {
-            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (responseHTTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
             {
                 navigationManager.NavigateTo("countries");
             }
@@ -47,7 +47,7 @@ else
         }
     }
 
-    private async Task Edit()
+    private async Task EditAsync()
     {
         var responseHTTP = await repository.Put("api/states", state);
 
@@ -55,16 +55,15 @@ else
         {
             var mensajeError = await responseHTTP.GetErrorMessageAsync();
             await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
         }
-        else
-        {
-            stateForm!.FormPostedSuccessfully = true;
-            navigationManager.NavigateTo($"/countries/details/{CountryId}");
-        }
+
+        Return();
     }
 
     private void Return()
     {
-        navigationManager.NavigateTo($"/countries/details/{CountryId}");
+        stateForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo($"/countries/details/{state!.CountryId}");
     }
 }

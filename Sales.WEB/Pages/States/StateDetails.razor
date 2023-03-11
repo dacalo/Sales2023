@@ -1,7 +1,8 @@
-﻿@page "/states/details/{Id:int}"
+﻿@page "/states/details/{StateId:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
-@inject SweetAlertService swal
+@inject SweetAlertService sweetAlertService
+@*@attribute [Authorize(Roles = "Admin")]*@
 
 @if (state is null)
 {
@@ -10,10 +11,11 @@
 else
 {
     <h3>@state.Name</h3>
+
     <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
         <div>
-            <a class="btn btn-primary" href="/cities/create/@state.Id">Nueva Ciudad</a>
-            <a class="btn btn-success" href="/states/detailes/@Id">Regresar</a>
+            <a class="btn btn-primary" href="/cities/create/@StateId">Nueva Ciudad</a>
+            <a class="btn btn-success" href="/countries/details/@state.CountryId">Regresar</a>
         </div>
         <div class="mx-2">
             <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar ciudad..." @bind-value="Filter" />
@@ -26,31 +28,33 @@ else
 
     <Pagination CurrentPage="currentPage"
             TotalPages="totalPages"
-            SelectedPage="SelectedPage" />
+            SelectedPage="SelectedPageAsync" />
 
     <GenericList MyList="cities">
-        <RecordsComplete>
+        <Body>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Ciudades</th>
-                        <th style="width:200px"></th>
+                        <th>Ciudad</th>
+                        <th style="width:180px"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var city in cities!)
                     {
                         <tr>
-                            <td>@city.Name</td>
                             <td>
-                                <a href="/cities/edit/@Id/@city.Id" class="btn btn-warning">Editar</a>
-                                <button class="btn btn-danger" @onclick=@(() => Delete(city))>Borrar</button>
+                                @city.Name
+                            </td>
+                            <td>
+                                <a class="btn btn-warning" href="/cities/edit/@city.Id">Editar</a>
+                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </RecordsComplete>
+        </Body>
     </GenericList>
 }
 
@@ -61,8 +65,8 @@ else
     private int totalPages;
 
     [Parameter]
-    public int Id { get; set; }
-
+    public int StateId { get; set; }
+    
     [Parameter]
     [SupplyParameterFromQuery]
     public string Page { get; set; } = string.Empty;
@@ -71,12 +75,12 @@ else
     [SupplyParameterFromQuery]
     public string Filter { get; set; } = string.Empty;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
-    private async Task SelectedPage(int page)
+    private async Task SelectedPageAsync(int page)
     {
         currentPage = page;
         await LoadAsync(page);
@@ -94,69 +98,64 @@ else
 
         if (string.IsNullOrEmpty(Filter))
         {
-            url1 = $"api/cities?id={Id}&page={page}";
-            url2 = $"api/cities/totalPages?id={Id}";
+            url1 = $"api/cities?id={StateId}&page={page}";
+            url2 = $"api/cities/totalPages?id={StateId}";
         }
         else
         {
-            url1 = $"api/cities?id={Id}&page={page}&filter={Filter}";
-            url2 = $"api/cities/totalPages?id={Id}&filter={Filter}";
+            url1 = $"api/cities?id={StateId}&page={page}&filter={Filter}";
+            url2 = $"api/cities/totalPages?id={StateId}&filter={Filter}";
         }
-
-        var responseHppt = await repository.Get<State>($"api/states/{Id}");
+        var responseHppt1 = await repository.Get<State>($"api/states/{StateId}");
         var responseHppt2 = await repository.Get<List<City>>(url1);
         var responseHppt3 = await repository.Get<int>(url2);
-        state = responseHppt.Response;
+        state = responseHppt1.Response;
         cities = responseHppt2.Response;
         totalPages = responseHppt3.Response;
     }
 
-    private async Task Delete(City city)
+    private async Task DeleteAsync(int CityId)
     {
-        var result = await swal.FireAsync(new SweetAlertOptions
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
-                Text = "¿Esta seguro que quieres borrar el registro?",
+                Text = "¿Realmente deseas eliminar el registro?",
                 Icon = SweetAlertIcon.Question,
-                ShowCancelButton = true
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
             });
 
         var confirm = string.IsNullOrEmpty(result.Value);
-
         if (confirm)
         {
             return;
         }
 
-        var responseHTTP = await repository.Delete($"api/cities/{city.Id}");
-
-        if (responseHTTP.Error)
+        var responseHttp = await repository.Delete($"/api/cities/{CityId}");
+        if (responseHttp.Error)
         {
-            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
             {
-                navigationManager.NavigateTo("/");
-            }
-            else
-            {
-                var mensajeError = await responseHTTP.GetErrorMessageAsync();
-                await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+                var message = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
             }
         }
-        else
-        {
-            await LoadAsync();
-        }
-    }
 
-    private async Task ApplyFilterAsync()
-    {
         await LoadAsync();
     }
 
     private async Task CleanFilterAsync()
     {
         Filter = string.Empty;
-        await LoadAsync();
+        await ApplyFilterAsync();
     }
 
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPageAsync(page);
+    }
 }

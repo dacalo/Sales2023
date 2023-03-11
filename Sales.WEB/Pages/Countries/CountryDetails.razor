@@ -1,15 +1,16 @@
 ﻿@page "/countries/details/{Id:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
-@inject SweetAlertService swal
+@inject SweetAlertService sweetAlertService
+@*@attribute [Authorize(Roles = "Admin")]*@
 
-@if (country is null)
+@if(country is null)
 {
     <p>Cargando...</p>
-}
-else
+} else
 {
     <h3>@country.Name</h3>
+ 
     <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
         <div>
             <a class="btn btn-primary" href="/states/create/@country.Id">Nuevo Estado/Departamento</a>
@@ -24,37 +25,40 @@ else
         </div>
     </div>
 
-
     <Pagination CurrentPage="currentPage"
             TotalPages="totalPages"
-            SelectedPage="SelectedPage" />
+            SelectedPage="SelectedPageAsync" />
 
-    <GenericList MyList="states">
-        <RecordsComplete>
+    <GenericList MyList="states!">
+        <Body>
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Estado / Departamento</th>
-                        <th>Ciudades</th>
-                        <th style="width:280px"></th>
+                        <th style="width:140px">Ciudades</th>
+                        <th style="width:260px"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var state in states!)
                     {
                         <tr>
-                            <td>@state.Name</td>
-                            <td>@state.CitiesNumber</td>
                             <td>
-                                <a href="/states/details/@state.Id" class="btn btn-info">Detalles</a>
-                                <a href="/states/edit/@state.Id" class="btn btn-warning">Editar</a>
-                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(state))>Borrar</button>
+                                @state.Name
+                            </td>
+                            <td>
+                                @state.CitiesNumber
+                            </td>
+                            <td>
+                                <a class="btn btn-info" href="/states/details/@state.Id">Detalles</a>
+                                <a class="btn btn-warning" href="/states/edit/@state.Id">Editar</a>
+                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(state.Id))>Borrar</button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </RecordsComplete>
+        </Body>
     </GenericList>
 }
 
@@ -75,12 +79,12 @@ else
     [SupplyParameterFromQuery]
     public string Filter { get; set; } = string.Empty;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
-    private async Task SelectedPage(int page)
+    private async Task SelectedPageAsync(int page)
     {
         currentPage = page;
         await LoadAsync(page);
@@ -115,9 +119,9 @@ else
         totalPages = responseHppt3.Response;
     }
 
-    private async Task DeleteAsync(State state)
+    private async Task DeleteAsync(int id)
     {
-        var result = await swal.FireAsync(new SweetAlertOptions
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
                 Text = "¿Realmente deseas eliminar el registro?",
@@ -133,13 +137,13 @@ else
             return;
         }
 
-        var responseHttp = await repository.Delete($"/api/states/{Id}");
+        var responseHttp = await repository.Delete($"/api/states/{id}");
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
             {
                 var message = await responseHttp.GetErrorMessageAsync();
-                await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
                 return;
             }
         }
@@ -147,15 +151,16 @@ else
         await LoadAsync();
     }
 
-    private async Task ApplyFilterAsync()
-    {
-        await LoadAsync();
-    }
-
     private async Task CleanFilterAsync()
     {
         Filter = string.Empty;
-        await LoadAsync();
+        await ApplyFilterAsync();
     }
 
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPageAsync(page);
+    }
 }

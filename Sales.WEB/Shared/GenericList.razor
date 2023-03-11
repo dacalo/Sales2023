@@ -4,7 +4,9 @@
 {
     @if (Loading is null)
     {
-        <img alt="loading..." src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif?20151024034921" />
+        <div class="align-items-center">
+            <img src="https://i.gifer.com/origin/34/34338d26023e5515f6cc8969aa027bca_w200.gif" />
+        </div>
     }
     else
     {
@@ -15,7 +17,9 @@ else if (MyList.Count == 0)
 {
     @if (NoRecords is null)
     {
-        <p>No hay registros para mostrar.</p>
+        <div class="align-items-center">
+            <p>No hay registros para mostrar.</p>
+        </div>
     }
     else
     {
@@ -24,32 +28,20 @@ else if (MyList.Count == 0)
 }
 else
 {
-    if (Records is not null)
-    {
-        @foreach (var item in MyList)
-        {
-            @Records(item)
-        }
-    }
-    else
-    {
-        @RecordsComplete
-    }
-
+    @Body
 }
+
 
 @code {
     [Parameter]
-    public RenderFragment Loading { get; set; } = null!;
+    public RenderFragment? Loading { get; set; }
 
     [Parameter]
-    public RenderFragment NoRecords { get; set; } = null!;
+    public RenderFragment? NoRecords { get; set; }
 
     [Parameter]
-    public RenderFragment<Titem> Records { get; set; } = null!;
-
-    [Parameter]
-    public RenderFragment RecordsComplete { get; set; } = null!;
+    [EditorRequired]
+    public RenderFragment Body { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]

@@ -5,17 +5,15 @@ namespace Sales.API.Services
 {
     public class ApiService : IApiService
     {
-        private readonly IConfiguration _configuration;
         private readonly string _urlBase;
         private readonly string _tokenName;
         private readonly string _tokenValue;
 
         public ApiService(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _urlBase = _configuration["CoutriesAPI:urlBase"]!;
-            _tokenName = _configuration["CoutriesAPI:tokenName"]!;
-            _tokenValue = _configuration["CoutriesAPI:tokenValue"]!;
+            _urlBase = configuration["CoutriesAPI:urlBase"]!;
+            _tokenName = configuration["CoutriesAPI:tokenName"]!;
+            _tokenValue = configuration["CoutriesAPI:tokenValue"]!;
         }
 
         public async Task<Response> GetListAsync<T>(string servicePrefix, string controller)
