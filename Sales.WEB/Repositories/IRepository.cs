@@ -12,5 +12,6 @@
 
         Task<HttpResponseWrapper<object>> Put<T>(string url, T model);
 
+        Task<HttpResponseWrapper<object>> Get(string url);
     }
 }

@@ -28,7 +28,17 @@ else if (MyList.Count == 0)
 }
 else
 {
-    @Body
+    if (Records is not null)
+    {
+        @foreach (var item in MyList)
+        {
+            @Records(item)
+        }
+    }
+    else
+    {
+        @RecordsComplete
+    }
 }
 
 
@@ -40,10 +50,12 @@ else
     public RenderFragment? NoRecords { get; set; }
 
     [Parameter]
-    [EditorRequired]
-    public RenderFragment Body { get; set; } = null!;
+    public RenderFragment<Titem>? Records { get; set; }
+
+    [Parameter]
+    public RenderFragment? RecordsComplete { get; set; }
 
     [Parameter]
     [EditorRequired]
-    public List<Titem> MyList { get; set; } = null!;
+    public List<Titem>? MyList { get; set; }
 }
