@@ -50,6 +50,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
 builder.Services.AddTransient<SeedDb>();
 builder.Services.AddScoped<IApiService, ApiService>();
+builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<IFileStorage, FileStorage>();
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 
@@ -63,14 +64,13 @@ builder.Services.AddIdentity<User, IdentityRole>(x =>
     x.Password.RequireLowercase = false;
     x.Password.RequireNonAlphanumeric = false;
     x.Password.RequireUppercase = false;
-    x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
     x.Lockout.MaxFailedAccessAttempts = 3;
     x.Lockout.AllowedForNewUsers = true;
 })
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<IUserHelper, UserHelper>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x => x.TokenValidationParameters = new TokenValidationParameters

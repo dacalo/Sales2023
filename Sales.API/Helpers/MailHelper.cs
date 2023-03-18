@@ -17,13 +17,13 @@ namespace Sales.API.Helpers
         {
             try
             {
-                var from = _configuration["Mail:From"];
-                var name = _configuration["Mail:Name"];
-                var smtp = _configuration["Mail:Smtp"];
-                var port = _configuration["Mail:Port"];
-                var password = _configuration["Mail:Password"];
+                string? from = _configuration["Mail:From"];
+                string? name = _configuration["Mail:Name"];
+                string? smtp = _configuration["Mail:Smtp"];
+                string? port = _configuration["Mail:Port"];
+                string? password = _configuration["Mail:Password"];
 
-                var message = new MimeMessage();
+                MimeMessage message = new MimeMessage();
                 message.From.Add(new MailboxAddress(name, from));
                 message.To.Add(new MailboxAddress(toName, toEmail));
                 message.Subject = subject;
@@ -33,7 +33,7 @@ namespace Sales.API.Helpers
                 };
                 message.Body = bodyBuilder.ToMessageBody();
 
-                using (var client = new SmtpClient())
+                using (SmtpClient client = new SmtpClient())
                 {
                     client.Connect(smtp, int.Parse(port!), false);
                     client.Authenticate(from, password);
