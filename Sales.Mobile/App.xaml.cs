@@ -7,7 +7,7 @@ namespace Sales.Mobile
         public App()
         {
             InitializeComponent();
-
+            
             var navPage = new NavigationPage(new MainPage());
             navPage.BarBackgroundColor = Colors.Chocolate;
             navPage.BarTextColor = Colors.White;

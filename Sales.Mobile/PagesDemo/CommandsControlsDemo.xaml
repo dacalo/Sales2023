@@ -51,6 +51,5 @@
                     VerticalOptions="Center" />
             </Grid>
         </SwipeView>
-
     </VerticalStackLayout>
 </ContentPage>
