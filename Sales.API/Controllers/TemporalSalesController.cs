@@ -90,5 +90,35 @@ namespace Sales.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult> Get(int id)
+        {
+            return Ok(await _context.TemporalSales
+                .Include(ts => ts.User!)
+                .Include(ts => ts.Product!)
+                .ThenInclude(p => p.ProductCategories!)
+                .ThenInclude(pc => pc.Category)
+                .Include(ts => ts.Product!)
+                .ThenInclude(p => p.ProductImages)
+                .FirstOrDefaultAsync(x => x.Id == id));
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> Put(TemporalSaleDTO temporalSaleDTO)
+        {
+            var currentTemporalSale = await _context.TemporalSales.FirstOrDefaultAsync(x => x.Id == temporalSaleDTO.Id);
+            if (currentTemporalSale == null)
+            {
+                return NotFound();
+            }
+
+            currentTemporalSale!.Remarks = temporalSaleDTO.Remarks;
+            currentTemporalSale.Quantity = temporalSaleDTO.Quantity;
+
+            _context.Update(currentTemporalSale);
+            await _context.SaveChangesAsync();
+            return Ok(temporalSaleDTO);
+        }
     }
 }
