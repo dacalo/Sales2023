@@ -1,4 +1,4 @@
-namespace Sales.Mobile.PagesDemo;
+namespace Sales.Mobile.ControlsDemo;
 
 public partial class CommandsControlsDemo : ContentPage
 {

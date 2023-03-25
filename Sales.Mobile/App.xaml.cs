@@ -1,4 +1,5 @@
-﻿using Sales.Mobile.PagesDemo;
+﻿using Sales.Mobile.ControlsDemo;
+using Sales.Mobile.PagesDemo;
 
 namespace Sales.Mobile
 {
@@ -11,7 +12,7 @@ namespace Sales.Mobile
             var navPage = new NavigationPage(new MainPage());
             navPage.BarBackgroundColor = Colors.Chocolate;
             navPage.BarTextColor = Colors.White;
-            MainPage = new CommandsControlsDemo();
+            MainPage = new TextControlsDemo();
         }
     }
 }
