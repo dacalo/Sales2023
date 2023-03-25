@@ -49,7 +49,6 @@ namespace Sales.API.Controllers
             return Ok(sale);
         }
 
-
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {

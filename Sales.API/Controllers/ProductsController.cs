@@ -27,14 +27,14 @@ namespace Sales.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Products
+            IQueryable<Product> queryable = _context.Products
                 .Include(x => x.ProductImages)
                 .Include(x => x.ProductCategories)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => x.Name!.ToLower().Contains(pagination.Filter.ToLower()));
             }
 
             return Ok(await queryable
@@ -48,12 +48,12 @@ namespace Sales.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Products
+            IQueryable<Product> queryable = _context.Products
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => x.Name!.ToLower().Contains(pagination.Filter.ToLower()));
             }
 
             double count = await queryable.CountAsync();
@@ -65,7 +65,7 @@ namespace Sales.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var product = await _context.Products
+            Product? product = await _context.Products
                 .Include(x => x.ProductImages)
                 .Include(x => x.ProductCategories!)
                 .ThenInclude(x => x.Category)
@@ -93,15 +93,16 @@ namespace Sales.API.Controllers
                     ProductImages = new List<ProductImage>()
                 };
 
-                foreach (var productImage in productDTO.ProductImages!)
+                foreach (string productImage in productDTO.ProductImages!)
                 {
-                    var photoProduct = Convert.FromBase64String(productImage);
+                    byte[] photoProduct = Convert.FromBase64String(productImage);
                     newProduct.ProductImages.Add(new ProductImage { Image = await _fileStorage.SaveFileAsync(photoProduct, ".jpg", "products") });
                 }
 
-                foreach (var productCategoryId in productDTO.ProductCategoryIds!)
+                foreach (int productCategoryId in productDTO.ProductCategoryIds!)
                 {
-                    newProduct.ProductCategories.Add(new ProductCategory { Category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productCategoryId) });
+                    Category? category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productCategoryId);
+                    newProduct.ProductCategories.Add(new ProductCategory { Category = category! });
                 }
 
                 _context.Add(newProduct);
@@ -126,7 +127,7 @@ namespace Sales.API.Controllers
         [HttpPost("addImages")]
         public async Task<ActionResult> PostAddImagesAsync(ImageDTO imageDTO)
         {
-            var product = await _context.Products
+            Product? product = await _context.Products
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == imageDTO.ProductId);
             if (product == null)
@@ -139,11 +140,11 @@ namespace Sales.API.Controllers
                 product.ProductImages = new List<ProductImage>();
             }
 
-            for (int i = 0; i < imageDTO.Images.Count; i++)
+            for (int i = 0; i < imageDTO.Images!.Count; i++)
             {
                 if (!imageDTO.Images[i].StartsWith("https://sales2023.blob.core.windows.net/products/"))
                 {
-                    var photoProduct = Convert.FromBase64String(imageDTO.Images[i]);
+                    byte[] photoProduct = Convert.FromBase64String(imageDTO.Images[i]);
                     imageDTO.Images[i] = await _fileStorage.SaveFileAsync(photoProduct, ".jpg", "products");
                     product.ProductImages!.Add(new ProductImage { Image = imageDTO.Images[i] });
                 }
@@ -181,7 +182,7 @@ namespace Sales.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            Product? product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -195,7 +196,7 @@ namespace Sales.API.Controllers
         [HttpPost("removeLastImage")]
         public async Task<ActionResult> PostRemoveLastImageAsync(ImageDTO imageDTO)
         {
-            var product = await _context.Products
+            Product? product = await _context.Products
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == imageDTO.ProductId);
             if (product == null)
@@ -208,7 +209,7 @@ namespace Sales.API.Controllers
                 return Ok();
             }
 
-            var lastImage = product.ProductImages.LastOrDefault();
+            ProductImage? lastImage = product.ProductImages.LastOrDefault();
             await _fileStorage.RemoveFileAsync(lastImage!.Image, "products");
             product.ProductImages.Remove(lastImage);
             _context.Update(product);
@@ -222,7 +223,7 @@ namespace Sales.API.Controllers
         {
             try
             {
-                var product = await _context.Products
+                Product? product = await _context.Products
                     .Include(x => x.ProductCategories)
                     .FirstOrDefaultAsync(x => x.Id == productDTO.Id);
                 if (product == null)

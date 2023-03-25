@@ -8,6 +8,6 @@ namespace Sales.Shared.DTOs
         public int ProductId { get; set; }
 
         [Required]
-        public List<string> Images { get; set; } = null!;
+        public List<string>? Images { get; set; }
     }
 }

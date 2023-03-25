@@ -39,7 +39,7 @@ namespace Sales.Shared.Entities
         [Display(Name = "Imágenes")]
         public int ProductImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
 
-        [Display(Name = "Imagén")]
+        [Display(Name = "Imágen")]
         public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
         public ICollection<TemporalSale>? TemporalSales { get; set; }
         public ICollection<SaleDetail>? SaleDetails { get; set; }

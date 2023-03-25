@@ -7,6 +7,7 @@ using Sales.API.Data;
 using Sales.API.Helpers;
 using Sales.Shared.DTOs;
 using Sales.Shared.Entities;
+using Sales.Shared.Responses;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -40,23 +41,23 @@ namespace Sales.API.Controllers
             User user = model;
             if (!string.IsNullOrEmpty(model.Photo))
             {
-                var photoUser = Convert.FromBase64String(model.Photo);
+                byte[] photoUser = Convert.FromBase64String(model.Photo);
                 model.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", _container);
             }
 
-            var result = await _userHelper.AddUserAsync(user, model.Password);
+            Microsoft.AspNetCore.Identity.IdentityResult result = await _userHelper.AddUserAsync(user, model.Password);
             if (result.Succeeded)
             {
                 await _userHelper.AddUserToRoleAsync(user, user.UserType.ToString());
 
-                var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                var tokenLink = Url.Action("ConfirmEmail", "accounts", new
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string? tokenLink = Url.Action("ConfirmEmail", "accounts", new
                 {
                     userid = user.Id,
                     token = myToken
                 }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
 
-                var response = _mailHelper.SendMail(user.FullName, user.Email!,
+                Shared.Responses.Response response = _mailHelper.SendMail(user.FullName, user.Email!,
                     $"Saless- Confirmación de cuenta",
                     $"<h1>Sales - Confirmación de cuenta</h1>" +
                     $"<p>Para habilitar el usuario, por favor hacer clic 'Confirmar Email':</p>" +
@@ -82,14 +83,14 @@ namespace Sales.API.Controllers
                 return NotFound();
             }
 
-            var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-            var tokenLink = Url.Action("ConfirmEmail", "accounts", new
+            string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            string? tokenLink = Url.Action("ConfirmEmail", "accounts", new
             {
                 userid = user.Id,
                 token = myToken
             }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
 
-            var response = _mailHelper.SendMail(user.FullName, user.Email!,
+            Shared.Responses.Response response = _mailHelper.SendMail(user.FullName, user.Email!,
                 $"Saless- Confirmación de cuenta",
                 $"<h1>Sales - Confirmación de cuenta</h1>" +
                 $"<p>Para habilitar el usuario, por favor hacer clic 'Confirmar Email':</p>" +
@@ -112,14 +113,14 @@ namespace Sales.API.Controllers
                 return NotFound();
             }
 
-            var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
-            var tokenLink = Url.Action("ResetPassword", "accounts", new
+            string myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            string? tokenLink = Url.Action("ResetPassword", "accounts", new
             {
                 userid = user.Id,
                 token = myToken
             }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
 
-            var response = _mailHelper.SendMail(user.FullName, user.Email!,
+            Response response = _mailHelper.SendMail(user.FullName, user.Email!,
                 $"Sales - Recuperación de contraseña",
                 $"<h1>Sales - Recuperación de contraseña</h1>" +
                 $"<p>Para recuperar su contraseña, por favor hacer clic 'Recuperar Contraseña':</p>" +
@@ -142,7 +143,7 @@ namespace Sales.API.Controllers
                 return NotFound();
             }
 
-            var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+            Microsoft.AspNetCore.Identity.IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
             if (result.Succeeded)
             {
                 return NoContent();
@@ -151,18 +152,17 @@ namespace Sales.API.Controllers
             return BadRequest(result.Errors.FirstOrDefault()!.Description);
         }
 
-
         [HttpGet("ConfirmEmail")]
         public async Task<ActionResult> ConfirmEmailAsync(string userId, string token)
         {
             token = token.Replace(" ", "+");
-            var user = await _userHelper.GetUserAsync(new Guid(userId));
+            User user = await _userHelper.GetUserAsync(new Guid(userId));
             if (user == null)
             {
                 return NotFound();
             }
 
-            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            Microsoft.AspNetCore.Identity.IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.FirstOrDefault());
@@ -174,10 +174,10 @@ namespace Sales.API.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginDTO model)
         {
-            var result = await _userHelper.LoginAsync(model);
+            Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
             if (result.Succeeded)
             {
-                var user = await _userHelper.GetUserAsync(model.Email);
+                User user = await _userHelper.GetUserAsync(model.Email);
                 return Ok(BuildToken(user));
             }
 
@@ -202,11 +202,11 @@ namespace Sales.API.Controllers
             {
                 if (!string.IsNullOrEmpty(user.Photo))
                 {
-                    var photoUser = Convert.FromBase64String(user.Photo);
+                    byte[] photoUser = Convert.FromBase64String(user.Photo);
                     user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", _container);
                 }
 
-                var currentUser = await _userHelper.GetUserAsync(user.Email!);
+                User currentUser = await _userHelper.GetUserAsync(user.Email!);
                 if (currentUser == null)
                 {
                     return NotFound();
@@ -220,7 +220,7 @@ namespace Sales.API.Controllers
                 currentUser.Photo = !string.IsNullOrEmpty(user.Photo) && user.Photo != currentUser.Photo ? user.Photo : currentUser.Photo;
                 currentUser.CityId = user.CityId;
 
-                var result = await _userHelper.UpdateUserAsync(currentUser);
+                Microsoft.AspNetCore.Identity.IdentityResult result = await _userHelper.UpdateUserAsync(currentUser);
                 if (result.Succeeded)
                 {
                     return Ok(BuildToken(currentUser));
@@ -238,7 +238,7 @@ namespace Sales.API.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Users
+            IQueryable<User> queryable = _context.Users
                 .Include(u => u.City)
                 .AsQueryable();
 
@@ -258,7 +258,7 @@ namespace Sales.API.Controllers
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Users.AsQueryable();
+            IQueryable<User> queryable = _context.Users.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
@@ -286,13 +286,13 @@ namespace Sales.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
+            User user = await _userHelper.GetUserAsync(User.Identity!.Name!);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var result = await _userHelper.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            Microsoft.AspNetCore.Identity.IdentityResult result = await _userHelper.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.FirstOrDefault()!.Description);
@@ -303,7 +303,7 @@ namespace Sales.API.Controllers
 
         private TokenDTO BuildToken(User user)
         {
-            var claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email!),
                 new Claim(ClaimTypes.Role, user.UserType.ToString()),
@@ -315,10 +315,10 @@ namespace Sales.API.Controllers
                 new Claim("CityId", user.CityId.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtKey"]!));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddDays(30);
-            var token = new JwtSecurityToken(
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtKey"]!));
+            SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            DateTime expiration = DateTime.UtcNow.AddDays(30);
+            JwtSecurityToken token = new JwtSecurityToken(
                 issuer: null,
                 audience: null,
                 claims: claims,
