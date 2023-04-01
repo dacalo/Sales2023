@@ -179,45 +179,6 @@ namespace Sales.API.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            Product? product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            _context.Remove(product);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpPost("removeLastImage")]
-        public async Task<ActionResult> PostRemoveLastImageAsync(ImageDTO imageDTO)
-        {
-            Product? product = await _context.Products
-                .Include(x => x.ProductImages)
-                .FirstOrDefaultAsync(x => x.Id == imageDTO.ProductId);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            if (product.ProductImages is null || product.ProductImages.Count == 0)
-            {
-                return Ok();
-            }
-
-            ProductImage? lastImage = product.ProductImages.LastOrDefault();
-            await _fileStorage.RemoveFileAsync(lastImage!.Image, "products");
-            product.ProductImages.Remove(lastImage);
-            _context.Update(product);
-            await _context.SaveChangesAsync();
-            imageDTO.Images = product.ProductImages.Select(x => x.Image).ToList();
-            return Ok(imageDTO);
-        }
-
         [HttpPut("ProductDTO")]
         public async Task<ActionResult> PutAsync(ProductDTO productDTO)
         {
@@ -256,5 +217,44 @@ namespace Sales.API.Controllers
             }
         }
 
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            Product? product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(product);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPost("removeLastImage")]
+        public async Task<ActionResult> PostRemoveLastImageAsync(ImageDTO imageDTO)
+        {
+            Product? product = await _context.Products
+                .Include(x => x.ProductImages)
+                .FirstOrDefaultAsync(x => x.Id == imageDTO.ProductId);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            if (product.ProductImages is null || product.ProductImages.Count == 0)
+            {
+                return Ok();
+            }
+
+            ProductImage? lastImage = product.ProductImages.LastOrDefault();
+            await _fileStorage.RemoveFileAsync(lastImage!.Image, "products");
+            product.ProductImages.Remove(lastImage);
+            _context.Update(product);
+            await _context.SaveChangesAsync();
+            imageDTO.Images = product.ProductImages.Select(x => x.Image).ToList();
+            return Ok(imageDTO);
+        }
     }
 }

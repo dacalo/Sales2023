@@ -34,7 +34,7 @@ else
             <Authorized>
                 @if (counter > 0)
                 {
-                    <a href="/ShowCart" class="btn btn-primary">Ver Carro de Compras (@counter)</a>
+                    <a href="/Orders/ShowCart" class="btn btn-primary">Ver Carro de Compras (@counter)</a>
                 }
             </Authorized>
         </AuthorizeView>
@@ -58,7 +58,7 @@ else
                         <h5 class="text-muted">@($"{product.Price:C2}")</h5>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="/products/details/@product.Id" class="btn btn-sm btn-secondary"><i class="oi oi-info" /> Detalles</a>
+                        <a href="/orders/details/@product.Id" class="btn btn-sm btn-secondary"><i class="oi oi-info" /> Detalles</a>
                         <button class="btn btn-sm btn-primary" @onclick=@(() => AddToCartAsync(product.Id))><i class="oi oi-plus" /> Agregar al Carro</button>
                     </div>
                 </div>
@@ -77,14 +77,14 @@ else
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string Page { get; set; } = "";
+    public string Page { get; set; } = string.Empty;
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string Filter { get; set; } = "";
+    public string Filter { get; set; } = string.Empty;
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -99,7 +99,7 @@ else
 
     private async Task CheckIsAuthenticatedAsync()
     {
-        var authenticationState = await authenticationStateTask;
+        var authenticationState = await authenticationStateTask!;
         isAuthenticated = authenticationState.User.Identity!.IsAuthenticated;
     }
 
