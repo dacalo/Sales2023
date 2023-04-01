@@ -1,4 +1,4 @@
-﻿@page "/sales"
+﻿@page "/Orders/Sales"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
@@ -41,7 +41,7 @@ else
                             {
                                 <tr>
                                     <td>
-                                        @($"{sale.Date:yyyy/MM/dd hh:mm tt}")
+                                        @($"{sale.Date.ToLocalTime():yyyy/MM/dd hh:mm tt}")
                                     </td>
                                     <td>
                                         @sale.User!.FullName
@@ -62,7 +62,7 @@ else
                                         @($"{sale.Value:C2}")
                                     </td>
                                     <td>
-                                        <a href="/saleDetails/@sale.Id" class="btn btn-info"><i class="oi oi-info" /> Detalles</a>
+                                        <a href="/Orders/SaleDetails/@sale.Id" class="btn btn-info"><i class="oi oi-info" /> Detalles</a>
                                     </td>
                                 </tr>
                             }

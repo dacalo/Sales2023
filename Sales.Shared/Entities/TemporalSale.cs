@@ -18,6 +18,6 @@ namespace Sales.Shared.Entities
         [DataType(DataType.MultilineText)]
         [Display(Name = "Comentarios")]
         public string? Remarks { get; set; }
-        public decimal Value => Product == null ? 0 : Product.Price * (decimal)Quantity;
+        public decimal Value => Product is null ? 0 : Product.Price * (decimal)Quantity;
     }
 }

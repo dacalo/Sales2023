@@ -1,4 +1,4 @@
-﻿@page "/saleDetails/{SaleId:int}"
+﻿@page "/Orders/SaleDetails/{SaleId:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
@@ -37,7 +37,7 @@ else
                                 }
                             </Authorized>
                         </AuthorizeView>
-                        <a class="btn btn-sm btn-success float-end" href="/sales"><i class="oi oi-arrow-thick-left" /> Regresar</a>
+                        <a class="btn btn-sm btn-success float-end" href="/Orders/Sales"><i class="oi oi-arrow-thick-left" /> Regresar</a>
                     </span>
                 </div>
                 <div class="row mx-2 my-2">
@@ -123,7 +123,7 @@ else
         {
             if (responseHppt.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
             {
-                navigationManager.NavigateTo("/sales");
+                navigationManager.NavigateTo("/Orders/Sales");
                 return;
             }
             var messageError = await responseHppt.GetErrorMessageAsync();
@@ -183,6 +183,6 @@ else
             return;
         }
 
-        navigationManager.NavigateTo("/sales");
+        navigationManager.NavigateTo("/Orders/Sales");
     }
 }

@@ -17,7 +17,7 @@ namespace Sales.API.Helpers
 
         public async Task<Response> ProcessOrderAsync(string email, string remarks)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            User? user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null)
             {
                 return new Response
@@ -27,10 +27,11 @@ namespace Sales.API.Helpers
                 };
             }
 
-            var temporalSales = await _context.TemporalSales
+            List<TemporalSale> temporalSales = await _context.TemporalSales
                 .Include(x => x.Product)
                 .Where(x => x.User!.Email == email)
                 .ToListAsync();
+
             Response response = await CheckInventoryAsync(temporalSales);
             if (!response.IsSuccess)
             {
@@ -46,7 +47,7 @@ namespace Sales.API.Helpers
                 OrderStatus = OrderStatus.Nuevo
             };
 
-            foreach (var temporalSale in temporalSales)
+            foreach (TemporalSale? temporalSale in temporalSales)
             {
                 sale.SaleDetails.Add(new SaleDetail
                 {
@@ -73,7 +74,8 @@ namespace Sales.API.Helpers
         private async Task<Response> CheckInventoryAsync(List<TemporalSale> temporalSales)
         {
             Response response = new() { IsSuccess = true };
-            foreach (var temporalSale in temporalSales)
+
+            foreach (TemporalSale temporalSale in temporalSales)
             {
                 Product? product = await _context.Products.FirstOrDefaultAsync(x => x.Id == temporalSale.Product!.Id);
                 if (product == null)

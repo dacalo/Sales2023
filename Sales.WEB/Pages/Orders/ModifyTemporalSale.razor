@@ -1,4 +1,4 @@
-﻿@page "/ModifyTemporalSale/{TemporalSaleId:int}"
+﻿@page "/Orders/ModifyTemporalSale/{TemporalSaleId:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
@@ -117,7 +117,7 @@ else
             Quantity = temporalSale.Quantity
         };
         product = temporalSale.Product;
-        categories = product!.ProductCategories!.Select(x => x.Category.Name).ToList();
+        categories = product!.ProductCategories!.Select(x => x.Category.Name).ToList()!;
         images = product.ProductImages!.Select(x => x.Image).ToList();
         loading = false;
     }
@@ -140,6 +140,6 @@ else
                 Timer = 5000
             });
         await toast2.FireAsync(icon: SweetAlertIcon.Success, message: "Producto modificado en el de compras.");
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/Orders/ShowCart");
     }
 }
