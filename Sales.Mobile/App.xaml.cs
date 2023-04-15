@@ -9,10 +9,11 @@ namespace Sales.Mobile
         {
             InitializeComponent();
             
-            var navPage = new NavigationPage(new MainPage());
-            navPage.BarBackgroundColor = Colors.Chocolate;
-            navPage.BarTextColor = Colors.White;
-            MainPage = new TextControlsDemo();
+            //var navPage = new NavigationPage(new FlyoutPageDemo());
+            //navPage.BarBackgroundColor = Colors.Chocolate;
+            //navPage.BarTextColor = Colors.White;
+            //MainPage = navPage;
+            MainPage = new FlyoutPageDemo();
         }
     }
 }
