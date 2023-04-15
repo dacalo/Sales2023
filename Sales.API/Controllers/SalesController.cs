@@ -115,7 +115,7 @@ namespace Sales.API.Controllers
         public async Task<ActionResult> Put(SaleDTO saleDTO)
         {
             var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
-            if (user == null)
+            if (user is null)
             {
                 return NotFound();
             }
@@ -129,7 +129,8 @@ namespace Sales.API.Controllers
             var sale = await _context.Sales
                 .Include(s => s.SaleDetails)
                 .FirstOrDefaultAsync(s => s.Id == saleDTO.Id);
-            if (sale == null)
+
+            if (sale is null)
             {
                 return NotFound();
             }
@@ -150,7 +151,7 @@ namespace Sales.API.Controllers
             foreach (var saleDetail in sale.SaleDetails!)
             {
                 var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == saleDetail.ProductId);
-                if (product != null)
+                if (product is not null)
                 {
                     product.Stock -= saleDetail.Quantity;
                 }

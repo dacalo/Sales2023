@@ -25,7 +25,12 @@ namespace Sales.API.Controllers
         private readonly DataContext _context;
         private readonly string _container;
 
-        public AccountsController(IUserHelper userHelper, IConfiguration configuration, IFileStorage fileStorage, IMailHelper mailHelper, DataContext context)
+        public AccountsController(
+            IUserHelper userHelper, 
+            IConfiguration configuration,
+            IFileStorage fileStorage,
+            IMailHelper mailHelper, 
+            DataContext context)
         {
             _userHelper = userHelper;
             _configuration = configuration;
@@ -233,6 +238,13 @@ namespace Sales.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpGet]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public async Task<ActionResult> Get()
+        //{
+        //    return Ok(await _userHelper.GetUserAsync(User.Identity!.Name!));
+        //}
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
