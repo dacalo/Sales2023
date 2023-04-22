@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sales.Mobile.MVVM.Models;
+using Sales.Mobile.MVVM.Repository;
 
 namespace Sales.Mobile
 {
@@ -18,6 +20,9 @@ namespace Sales.Mobile
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+            builder.Services.AddSingleton<CustomerRepository>();
+            builder.Services.AddSingleton<BaseRepository<Customer>>();
+            builder.Services.AddSingleton<BaseRepository<Order>>();
 
             return builder.Build();
         }

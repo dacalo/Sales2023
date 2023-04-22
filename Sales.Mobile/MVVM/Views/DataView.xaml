@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sales.Mobile.MVVM.Views.DataView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:DataTemplates="clr-namespace:Sales.Mobile.MVVM.Selectors"
+    Title="DataView">
+
+    <ContentPage.Resources>
+        <DataTemplates:ProductDataTemplateSelector x:Key="ProductTemplates" />
+    </ContentPage.Resources>
+
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+        <CollectionView
+            ItemTemplate="{StaticResource ProductTemplates}"
+            ItemsSource="{Binding Products}"
+            RemainingItemsThreshold="1"
+            RemainingItemsThresholdReachedCommand="{Binding ThresholdReachedCommand}" />
+    </RefreshView>
+</ContentPage>

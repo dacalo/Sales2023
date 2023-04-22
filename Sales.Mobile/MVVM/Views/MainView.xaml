@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sales.Mobile.MVVM.Views.MainView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="MainView">
+    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <Button Command="{Binding GetAllUsersCommand}" Text="Get All Users" />
+        <Button
+            Margin="0,5,0,0"
+            Command="{Binding GetSingleUserCommand}"
+            Text="Get Gingle User" />
+        <Button
+            Margin="0,5,0,0"
+            Command="{Binding AddUserCommand}"
+            Text="Add User" />
+        <Button
+            Margin="0,5,0,0"
+            Command="{Binding AddUserCommand}"
+            Text="Add User" />
+
+    </VerticalStackLayout>
+</ContentPage>
