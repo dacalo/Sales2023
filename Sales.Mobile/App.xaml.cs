@@ -1,5 +1,7 @@
-﻿using Sales.Mobile.ControlsDemo;
+﻿using Sales.Mobile.BindingDemo;
+using Sales.Mobile.ControlsDemo;
 using Sales.Mobile.PagesDemo;
+using PresentationControlsDemo = Sales.Mobile.PagesDemo.PresentationControlsDemo;
 
 namespace Sales.Mobile
 {
@@ -13,7 +15,7 @@ namespace Sales.Mobile
             //navPage.BarBackgroundColor = Colors.Chocolate;
             //navPage.BarTextColor = Colors.White;
             //MainPage = navPage;
-            MainPage = new FlyoutPageDemo();
+            MainPage = new BindigPage();
         }
     }
 }

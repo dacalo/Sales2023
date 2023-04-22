@@ -6,27 +6,29 @@
     Title="PresentationControlsDemo">
 
     <ScrollView>
-        <VerticalStackLayout>
-            <Label
-                FontAttributes="Bold"
-                FontSize="Large"
-                HorizontalTextAlignment="Center"
-                Text="Este es un label"
-                TextColor="Black" />
+        <VerticalStackLayout Spacing="10">
+            <BoxView HeightRequest="200" Color="Navy" />
             <Ellipse
+                Margin="0,-100,0,0"
                 Fill="DarkRed"
                 HeightRequest="200"
                 HorizontalOptions="Center"
                 Stroke="DarkGreen"
                 StrokeThickness="10"
                 WidthRequest="200" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalTextAlignment="Center"
+                Text="Este es un label"
+                TextColor="Black" />
             <Line
                 Stroke="Purple"
-                StrokeThickness="10"
+                StrokeThickness="5"
                 X1="0"
-                X2="100"
-                Y1="0"
-                Y2="50" />
+                X2="500"
+                Y1="1"
+                Y2="0" />
             <Rectangle
                 Fill="Aqua"
                 HeightRequest="50"
@@ -36,18 +38,20 @@
                 Stroke="Black"
                 StrokeThickness="5"
                 WidthRequest="150" />
-            <Polygon
-                Fill="LightBlue"
-                Points="40,10 70,80 10,50"
-                Stroke="DarkBlue"
-                StrokeThickness="5" />
-            <Polygon
-                Fill="Yellow"
-                Points="40,10 70,80 10,50"
-                Stroke="Green"
-                StrokeDashArray="1,1"
-                StrokeDashOffset="6"
-                StrokeThickness="5" />
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Polygon
+                    Fill="LightBlue"
+                    Points="40,10 70,80 10,50"
+                    Stroke="DarkBlue"
+                    StrokeThickness="5" />
+                <Polygon
+                    Fill="Yellow"
+                    Points="40,10 70,80 10,50"
+                    Stroke="Green"
+                    StrokeDashArray="1,1"
+                    StrokeDashOffset="8"
+                    StrokeThickness="5" />
+            </HorizontalStackLayout>
             <Polyline Points="0,0 10,30 15,0 18,60 23,30 35,30 40,0 43,60 48,30 100,30" Stroke="Red" />
             <Polyline
                 Fill="Blue"
@@ -57,6 +61,7 @@
             <Path
                 Aspect="Uniform"
                 Data="M 10,100 L 100,100 100,50Z"
+                Fill="#44ffba"
                 HorizontalOptions="Center"
                 Stroke="Black" />
             <Border
@@ -82,7 +87,6 @@
             </Frame>
             <WebView HeightRequest="500" Source="https://www.google.com/" />
 
-            <BoxView BackgroundColor="Navy" HeightRequest="200" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

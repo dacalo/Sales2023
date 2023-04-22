@@ -22,22 +22,26 @@
                 </CarouselView.ItemsSource>
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <StackLayout>
+                        <StackLayout Spacing="0">
                             <Frame
-                            Margin="20"
-                            BorderColor="DarkGray"
-                            CornerRadius="5"
-                            HasShadow="True"
-                            HeightRequest="100"
-                            HorizontalOptions="Center"
-                            VerticalOptions="CenterAndExpand">
+                                Margin="20"
+                                BorderColor="DarkGray"
+                                CornerRadius="5"
+                                HasShadow="True"
+                                HeightRequest="100"
+                                HorizontalOptions="Center"
+                                VerticalOptions="CenterAndExpand">
                                 <Label Text="{Binding .}" />
                             </Frame>
                         </StackLayout>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
-
+            <IndicatorView
+                x:Name="indicatorView"
+                HorizontalOptions="Center"
+                IndicatorColor="LightGray"
+                SelectedIndicatorColor="DarkGray" />
             <ListView HasUnevenRows="True">
                 <ListView.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
@@ -57,13 +61,13 @@
                         <ViewCell>
                             <StackLayout>
                                 <Frame
-                                Margin="20"
-                                BorderColor="DarkGray"
-                                CornerRadius="5"
-                                HasShadow="True"
-                                HeightRequest="100"
-                                HorizontalOptions="Center"
-                                VerticalOptions="CenterAndExpand">
+                                    Margin="20"
+                                    BorderColor="DarkGray"
+                                    CornerRadius="5"
+                                    HasShadow="True"
+                                    HeightRequest="100"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="CenterAndExpand">
                                     <Label Text="{Binding .}" />
                                 </Frame>
                             </StackLayout>
@@ -90,13 +94,13 @@
                     <DataTemplate>
                         <StackLayout>
                             <Frame
-                            Margin="20"
-                            BorderColor="DarkGray"
-                            CornerRadius="5"
-                            HasShadow="True"
-                            HeightRequest="100"
-                            HorizontalOptions="Center"
-                            VerticalOptions="CenterAndExpand">
+                                Margin="20"
+                                BorderColor="DarkGray"
+                                CornerRadius="5"
+                                HasShadow="True"
+                                HeightRequest="100"
+                                HorizontalOptions="Center"
+                                VerticalOptions="CenterAndExpand">
                                 <Label Text="{Binding .}" />
                             </Frame>
                         </StackLayout>
@@ -127,28 +131,21 @@
                         <EntryCell Label="Entry Label" Text="EntryCell Text" />
                         <SwitchCell Text="SwitchCell Text" />
                         <ImageCell
-                Detail="ImageCell Detail"
-                ImageSource="dotnet_bot.svg"
-                Text="ImageCell Text" />
+                            Detail="ImageCell Detail"
+                            ImageSource="dotnet_bot.svg"
+                            Text="ImageCell Text" />
                     </TableSection>
                     <TableSection Title="Second Section">
                         <TextCell Detail="TextCell Detail" Text="TextCell" />
                         <EntryCell Label="Entry Label" Text="EntryCell Text" />
                         <SwitchCell Text="SwitchCell Text" />
                         <ImageCell
-                Detail="ImageCell Detail"
-                ImageSource="dotnet_bot.svg"
-                Text="ImageCell Text" />
+                            Detail="ImageCell Detail"
+                            ImageSource="dotnet_bot.svg"
+                            Text="ImageCell Text" />
                     </TableSection>
                 </TableRoot>
             </TableView>
-
-            <IndicatorView
-            x:Name="indicatorView"
-            HorizontalOptions="Center"
-            IndicatorColor="LightGray"
-            SelectedIndicatorColor="DarkGray" />
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

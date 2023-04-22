@@ -8,7 +8,7 @@
     BarTextColor="LightSalmon"
     SelectedTabColor="DarkRed"
     UnselectedTabColor="DarkKhaki">
-    
+
     <ContentPage
         Title="Page 1"
         BackgroundColor="Aqua"

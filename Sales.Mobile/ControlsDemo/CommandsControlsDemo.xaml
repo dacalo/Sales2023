@@ -10,22 +10,26 @@
             Clicked="btnTest_Clicked"
             Text="Click Me!" />
         <ImageButton Clicked="btnTest_Clicked" Source="dotnet_bot.svg" />
-        <RadioButton
-            CheckedChanged="RadioButton_CheckedChanged"
-            Content="Option 1"
-            GroupName="group1" />
-        <RadioButton
-            CheckedChanged="RadioButton_CheckedChanged"
-            Content="Option 2"
-            GroupName="group1" />
-        <RadioButton
-            CheckedChanged="RadioButton_CheckedChanged"
-            Content="Option 3"
-            GroupName="group2" />
-        <RadioButton
-            CheckedChanged="RadioButton_CheckedChanged"
-            Content="Option 4"
-            GroupName="group2" />
+        <Frame>
+            <VerticalStackLayout>
+                <RadioButton
+                    CheckedChanged="RadioButton_CheckedChanged"
+                    Content="Option 1"
+                    GroupName="group1" />
+                <RadioButton
+                    CheckedChanged="RadioButton_CheckedChanged"
+                    Content="Option 2"
+                    GroupName="group1" />
+                <RadioButton
+                    CheckedChanged="RadioButton_CheckedChanged"
+                    Content="Option 3"
+                    GroupName="group2" />
+                <RadioButton
+                    CheckedChanged="RadioButton_CheckedChanged"
+                    Content="Option 4"
+                    GroupName="group2" />
+            </VerticalStackLayout>
+        </Frame>
         <SwipeView>
             <SwipeView.LeftItems>
                 <SwipeItems>
